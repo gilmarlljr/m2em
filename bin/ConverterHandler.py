@@ -8,7 +8,7 @@ def ConverterHandler(args):
     """ Function that handles the Converter in a loop """
 
     # Load Chapters!
-    chapters = helper.getChapters()
+    chapters = helper.getChapters(args.limit)
 
 
     # Start conversion loop!
@@ -26,7 +26,7 @@ def ConverterHandler(args):
             current_conversation.data_collector(chapter)
 
             # Check if Download loop & Download task is selected
-            if not args.start:
+            if not args.start or args.ignore_date:
                 current_conversation.cbz_creator()
                 current_conversation.eb_creator()
             else:

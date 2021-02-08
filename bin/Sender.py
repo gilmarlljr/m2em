@@ -145,7 +145,7 @@ class Sender:
                     logging.debug("Sent Ebook email to %s ", kindle_mail)
                     self.send_confirmation(user_mail)
                 except smtplib.SMTPException as fail:
-                    logging.debug("Could not send email! %s", fail)
+                    logging.info("Could not send email! %s", fail)
 
         # Set Email as Sent
         helper.setIsSent(self.mangaid)

@@ -9,7 +9,7 @@ def SenderHandler(args):
     """ Function that handles the sending of ebooks when a loop is called """
 
     # Get all Chapters
-    chapters = helper.getChapters()
+    chapters = helper.getChapters(args.limit)
 
     # Load Users
     users = helper.getUsers()
@@ -39,7 +39,7 @@ def SenderHandler(args):
             else:
 
                 # Check if Sender loop or Sender task is selected
-                if not args.start:
+                if not args.start or args.ignore_date:
                     logging.info("Sending %s...", current_sender.mangatitle)
                     current_sender.send_eb()
                 else:

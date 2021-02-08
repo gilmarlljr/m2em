@@ -7,6 +7,7 @@ import bin.Helper as helper
 import bin.sourceparser.Mangastream as msparser
 import bin.sourceparser.Mangafox as mxparser
 import bin.sourceparser.Cdmnet as cdmparser
+import bin.sourceparser.UnionMangas as umparser
 from PIL import Image
 from PIL import ImageOps
 from PIL import ImageFilter
@@ -122,6 +123,22 @@ class Downloader:
                     counter = counter + 1
                     self.downloader(i, counter, cdmparser.getImageUrl)
 
+
+            # Finish :)
+            logging.info("Finished download of %s!", self.mangatitle)
+        # Union Parser
+        elif self.origin == "unionleitor.top" or self.origin == "unionmangas.top":
+            image_url_list = umparser.getPagesUrl(self.mangastarturl)
+
+            # check if we have images to download
+            if not len(image_url_list) == 0:
+
+                # Turn Manga pages into Image links!
+                logging.info("Starting download of %s...", self.mangatitle)
+                counter = 0
+                for i in image_url_list:
+                    counter = counter + 1
+                    self.downloader(i, counter, umparser.getImageUrl)
 
             # Finish :)
             logging.info("Finished download of %s!", self.mangatitle)

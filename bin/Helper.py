@@ -3,6 +3,8 @@ import logging
 import shutil
 import datetime
 import os
+
+import dateutil
 import texttable
 import requests
 import validators
@@ -12,6 +14,7 @@ import bin.Config as Config
 from bin.Models import *
 import bin.sourceparser.Mangastream as msparser
 import bin.sourceparser.Mangafox as mxparser
+import bin.sourceparser.UnionMangas as umparser
 import bin.sourceparser.Cdmnet as cdmparser
 
 '''
@@ -361,12 +364,14 @@ def getFeeds():
 Function that gets chapters and returns it
 Returns: __chapterdata
 '''
-def getChapters():
+def getChapters(limit):
 
     # Make the query
     db.connection()
-    chapters = Chapter.select()
-
+    if limit is not None:
+        chapters = Chapter.select().order_by(Chapter.date.desc()).limit(int(limit))
+    else:
+        chapters = Chapter.select().order_by(Chapter.date.desc())
     return chapters
 
 
@@ -383,7 +388,7 @@ def getChaptersFromID(chapterids):
     for i in chapterids:
         # Get Data
         try:
-            chapter = Chapter.select().where(Chapter.chapterid == i).get()
+            chapter = Chapter.select().where(Chapter.chapterid == int(i)).get()
             chapterdata.append(chapter)
         except DoesNotExist:
             logging.error("Chapter with ID %s does not exist!", i)
@@ -497,6 +502,29 @@ def getMangaData(url, entry):
         logging.debug("Mangadata succesfully loaded")
 
         mangadata = [manganame, pages, chapter, title, chapter_name, chapter_pubDate]
+    #union
+    elif origin == "unionleitor.top" or origin == "unionmangas.top":
+        logging.debug("Getting Mangadata from Unionmangas. for %s", url)
+
+        # Easy Stuff
+        title = entry.title
+        chapter_pubDate = dateutil.parser.parse(entry.published)
+
+
+        # Load page once to hand it over to parser function
+        logging.debug("Loading Page to gather data...")
+        page = requests.get(url)
+
+        # Getting the data
+        manganame = umparser.getTitle(page)
+        chapter_name = umparser.getChapterName(page)
+        chapter = umparser.getChapter(page)
+        pages = umparser.getPages(page)
+
+        logging.debug("Mangadata succesfully loaded")
+
+        mangadata = [manganame, pages, chapter, title, chapter_name, chapter_pubDate]
+
     else:
         logging.error("Not supportet origin!")
 

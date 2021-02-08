@@ -22,7 +22,7 @@ class User(ModelBase):
 class Chapter(ModelBase):
     chapter = TextField(null=True)
     chapterid = AutoField()
-    date = TextField(null=True)
+    date = DateTimeField(null=True)
     desc = TextField(null=True)
     isconverted = IntegerField(null=True)
     ispulled = IntegerField(null=True)

@@ -6,11 +6,11 @@ import bin.Helper as helper
 from bin.Downloader import Downloader
 
 
-def downloader(args):
+def  downloader(args):
     """ the downloader function """
 
     # Make the query
-    chapters = helper.getChapters()
+    chapters = helper.getChapters(args.limit)
 
     if args.start:
         logging.debug("The loop will only consider Chapters younger than 24h!")
@@ -41,7 +41,7 @@ def downloader(args):
         else:
 
             # Check if Download loop & Download task is selected
-            if not args.start:
+            if not args.start or args.ignore_date:
                 current_chapter.data_processor()
             else:
                 # Only start run if chapter is younger than 24h
